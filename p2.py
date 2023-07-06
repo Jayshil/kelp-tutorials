@@ -23,6 +23,7 @@ from jax.random import PRNGKey, split
 from kelp import Planet
 from kelp.jax import reflected_phase_curve_inhomogeneous
 import pickle
+import corner
 
 # Fitting data to inhomogeneous pc
 
@@ -167,6 +168,13 @@ plt.gca().set(
 )
 
 plt.savefig('Data/fig1.png', dpi=500)
+
+# make a corner plot
+corner.corner(
+    result,
+    quiet=True,
+);
+plt.savefig('Data/corner.png', dpi=500)
 
 # Dumping a pickle
 pickle.dump(result,open('Data/posteriors.pkl','wb'))
