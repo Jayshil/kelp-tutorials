@@ -12,7 +12,7 @@ import arviz
 
 import numpyro
 # Set the number of cores on your machine for parallelism:
-cpu_cores = 1
+cpu_cores = 4
 numpyro.set_host_device_count(cpu_cores)
 
 from numpyro.infer import MCMC, NUTS
@@ -154,7 +154,7 @@ for i in range(n_models_to_plot):
         np.random.randint(0, high=mcmc.num_samples)
     )
     omega_0, omega_prime, x1, x2, A_g, offset = np.array([
-        result.posterior[k][sample_index][0] for k in keys
+        result.posterior[k][sample_index] for k in keys
     ])
     flux_ratio_ppm, g, q = reflected_phase_curve_inhomogeneous(
         binphase, omega_0, omega_prime, x1, x2, A_g, a_rp
@@ -175,6 +175,11 @@ corner.corner(
     quiet=True,
 );
 plt.savefig('Data/corner.png', dpi=500)
+
+sum1 = arviz.summary(result, var_names=['omega_0', 'omega_prime', 'x1', 'x2', 'A_g', 'flux_offset'])
+print(sum1)
+_ = arviz.plot_trace(result, var_names=['omega_0', 'omega_prime', 'x1', 'x2', 'A_g', 'flux_offset'])
+plt.savefig('Data/trace.png', dpi=500)
 
 # Dumping a pickle
 pickle.dump(result,open('Data/posteriors.pkl','wb'))
